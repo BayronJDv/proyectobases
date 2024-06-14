@@ -74,9 +74,9 @@
               Registrarse
             </a>
             <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
-              <a class="dropdown-item" href="{{ url_for('authentication.register_client') }}">Registrar Cliente</a>
               <a class="dropdown-item" href="{{ url_for('authentication.register_user') }}">Registrar Usuario</a>
-              <a class="dropdown-item" href="#">Something else here</a>
+              <a class="dropdown-item" href="{{ url_for('authentication.register_client') }}">Registrar Cliente</a>
+              <a class="dropdown-item" href="{{ url_for('authentication.register_delivery') }}">Registrar Mensajero</a>
             </div>
           </li>
         </ul>
