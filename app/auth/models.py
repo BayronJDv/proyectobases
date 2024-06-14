@@ -51,7 +51,7 @@ class Delivery(db.Model):
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     user_name = db.Column(db.String(20))
     user_email = db.Column(db.String(60), unique=True,index=True)
     user_password = db.Column(db.String(80))
@@ -77,23 +77,23 @@ class User(UserMixin, db.Model):
 class Userm(UserMixin, db.Model):
     __tablename__ = "usersm"
 
-    id = db.Column(db.Integer, primary_key=True)
-    user_name = db.Column(db.String(20))
-    user_email = db.Column(db.String(60), unique=True,index=True)
-    user_password = db.Column(db.String(80))
-    user_adress = db.Column(db.String(200))
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    userm_name = db.Column(db.String(20))
+    userm_email = db.Column(db.String(60), unique=True,index=True)
+    userm_password = db.Column(db.String(80))
+    userm_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     did = db.Column(db.Integer, db.ForeignKey('deliverys.did'), nullable=False)
 
-    def check_password(self, password):
-        return bcrypt.check_password_hash(self.user_password, password)
+    def checkm_password(self, password):
+        return bcrypt.check_password_hash(self.userm_password, password)
     
     @classmethod
     def create_userm(cls, user, email, password,address, deliveryid):
-        userm = cls(user_name=user,
-                   user_email=email,
-                   user_password=bcrypt.generate_password_hash(password).decode("utf-8"),
-                   user_adress=address,
+        userm = cls(userm_name=user,
+                   userm_email=email,
+                   userm_password=bcrypt.generate_password_hash(password).decode("utf-8"),
+                   userm_adress=address,
                    did=deliveryid
         )
         db.session.add(userm)
@@ -103,11 +103,11 @@ class Userm(UserMixin, db.Model):
 
 @login_manager.user_loader
 def load_user(user_id):
-    # Intenta cargar como Admin primero
-    admin = Userm.query.get(int(user_id))
-    if admin is not None:
-        return admin
+    # Intenta cargar como mensajes primero
+    men = Userm.query.get(int(user_id))
+    if men is not None:
+        return men
     
-    # Si no es un Admin, intenta cargar como RegularUser
+    # Si no es un men, intenta cargar como RegularUser
     user = User.query.get(int(user_id))
     return user
