@@ -48,10 +48,6 @@ class Delivery(db.Model):
         db.session.commit()
         return delivery
 
-
-
-
-
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
@@ -82,10 +78,10 @@ class Userm(UserMixin, db.Model):
     __tablename__ = "usersm"
 
     id = db.Column(db.Integer, primary_key=True)
-    userm_name = db.Column(db.String(20))
-    userm_email = db.Column(db.String(60), unique=True,index=True)
-    userm_password = db.Column(db.String(80))
-    userm_adress = db.Column(db.String(200))
+    user_name = db.Column(db.String(20))
+    user_email = db.Column(db.String(60), unique=True,index=True)
+    user_password = db.Column(db.String(80))
+    user_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     did = db.Column(db.Integer, db.ForeignKey('deliverys.did'), nullable=False)
 
@@ -94,28 +90,24 @@ class Userm(UserMixin, db.Model):
     
     @classmethod
     def create_userm(cls, user, email, password,address, deliveryid):
-        userm = cls(userm_name=user,
-                   userm_email=email,
-                   userm_password=bcrypt.generate_password_hash(password).decode("utf-8"),
-                   userm_adress=address,
+        userm = cls(user_name=user,
+                   user_email=email,
+                   user_password=bcrypt.generate_password_hash(password).decode("utf-8"),
+                   user_adress=address,
                    did=deliveryid
         )
         db.session.add(userm)
         db.session.commit()
         return userm
-"""
+
+
 @login_manager.user_loader
 def load_user(user_id):
-    # Primero intenta cargar como Admin
-    userm_id = user_id
-    userm = userm.query.get(int(userm_id))
-    if userm:
-        return userm
+    # Intenta cargar como Admin primero
+    admin = Userm.query.get(int(user_id))
+    if admin is not None:
+        return admin
+    
     # Si no es un Admin, intenta cargar como RegularUser
-    user = user.query.get(int(user_id))
-    return user"""
-
-
-@login_manager.user_loader
-def load_user(id):
-    return User.query.get(int(id))
+    user = User.query.get(int(user_id))
+    return user
