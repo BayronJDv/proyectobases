@@ -30,9 +30,9 @@ with easydel.app_context():
             telephone="test**123"
         ) 
           
-    if not Userm.query.filter_by(user_name="test_APARECE_en_pantalla").first():
+    if not Userm.query.filter_by(user_name="test_APARECE").first():
         Userm.create_userm(
-            user="test_APARECE_en_pantalla",
+            user="test_APARECE",
             email="testA-testing@test.com",
             password="testA**123",
             address="test-address",
