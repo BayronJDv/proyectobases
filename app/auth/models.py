@@ -2,7 +2,7 @@ from datetime import datetime
 from app import db, bcrypt
 from app import login_manager
 from flask_login import UserMixin
-
+from sqlalchemy import Sequence
 
 class Client(db.Model):
     __tablename__ = 'clients'
@@ -48,10 +48,13 @@ class Delivery(db.Model):
         db.session.commit()
         return delivery
 
+user_id_seq = Sequence('users_id_seq', start=1, increment=1)
 class User(UserMixin, db.Model):
     __tablename__ = "users"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, user_id_seq, server_default=user_id_seq.next_value(), primary_key=True)
+
+    user_name = db.Column(db.String(50))
     user_name = db.Column(db.String(20))
     user_email = db.Column(db.String(60), unique=True,index=True)
     user_password = db.Column(db.String(80))
@@ -74,10 +77,12 @@ class User(UserMixin, db.Model):
         db.session.commit()
         return user
 
+userm_id_seq = Sequence('usersm_id_seq', start=1000000, increment=1)
 class Userm(UserMixin, db.Model):
     __tablename__ = "usersm"
 
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    id = db.Column(db.Integer, userm_id_seq, server_default=userm_id_seq.next_value(), primary_key=True)
+    userm_name = db.Column(db.String(50))
     userm_name = db.Column(db.String(20))
     userm_email = db.Column(db.String(60), unique=True,index=True)
     userm_password = db.Column(db.String(80))
