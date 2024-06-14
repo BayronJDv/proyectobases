@@ -46,22 +46,26 @@ def index():
 @authentication.route("/login", methods=["GET","POST"])
 def log_in_user():
     if current_user.is_authenticated:
-       flash("you are already logged in the system")
-       return redirect(url_for("authentication.homepage"))
+        flash("You are already logged in the system")
+        return redirect(url_for("authentication.homepage"))
+    
     form = LoginForm()
     if form.validate_on_submit():
-        men = Userm.query.filter_by(user_email=form.email.data).first()
-        if not men or not men.check_password(form.password.data):
-            user = User.query.filter_by(user_email=form.email.data).first()
-            if not user or not user.check_password(form.password.data):
-                flash("Invalid credentials...")
-                return redirect(url_for("authentication.log_in_user"))
+        user = User.query.filter_by(user_email=form.email.data).first()
+        if user and user.check_password(form.password.data):
             login_user(user, form.stay_loggedin.data)
-            print(f"NOMBRE usuario: {user.user_name}")
-            return (redirect(url_for("authentication.homepage")))
+            print(user.user_name)
+            return redirect(url_for("authentication.homepage"))
         
-        login_user(men, form.stay_loggedin.data)
-        return (redirect(url_for("authentication.homepage")))
+        men = Userm.query.filter_by(userm_email=form.email.data).first()
+        if men and men.checkm_password(form.password.data):
+            login_user(men, form.stay_loggedin.data)
+            print("Esta entrando a loginMens")
+            return redirect(url_for("authentication.homepagem"))
+
+        flash("Invalid credentials...")
+        return redirect(url_for("authentication.log_in_user"))
+    
     return render_template("login.html", form=form)
 
 
@@ -69,6 +73,11 @@ def log_in_user():
 @login_required
 def homepage():
     return render_template("homepage.html")
+
+@authentication.route("/homepagem")
+@login_required
+def homepagem():
+    return render_template("homepagem.html")
 
 
 @authentication.route("/logout", methods=["GET"])
@@ -84,5 +93,3 @@ def page_not_found(error):
 @authentication.route("/pruebas")
 def pruebas():
     return render_template('pruebas.html')
-
-
