@@ -55,7 +55,6 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, user_id_seq, server_default=user_id_seq.next_value(), primary_key=True)
 
     user_name = db.Column(db.String(50))
-    user_name = db.Column(db.String(20))
     user_email = db.Column(db.String(60), unique=True,index=True)
     user_password = db.Column(db.String(80))
     user_adress = db.Column(db.String(200))
@@ -83,7 +82,6 @@ class Userm(UserMixin, db.Model):
 
     id = db.Column(db.Integer, userm_id_seq, server_default=userm_id_seq.next_value(), primary_key=True)
     userm_name = db.Column(db.String(50))
-    userm_name = db.Column(db.String(20))
     userm_email = db.Column(db.String(60), unique=True,index=True)
     userm_password = db.Column(db.String(80))
     userm_adress = db.Column(db.String(200))
