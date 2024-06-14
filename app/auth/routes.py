@@ -1,7 +1,7 @@
 from flask import render_template,  flash, redirect, url_for
 from app.auth.forms import *
 from app.auth import authentication
-from app.auth.models import User,Client
+from app.auth.models import User,Client,Userm
 from flask_login import login_user, logout_user, login_required, current_user
 
 
@@ -50,12 +50,17 @@ def log_in_user():
        return redirect(url_for("authentication.homepage"))
     form = LoginForm()
     if form.validate_on_submit():
-        user = User.query.filter_by(user_email=form.email.data).first()
-        if not user or not user.check_password(form.password.data):
-           flash("Invalid credentials...")
-           return redirect(url_for("authentication.log_in_user"))
+        men = Userm.query.filter_by(user_email=form.email.data).first()
+        if not men or not men.check_password(form.password.data):
+            user = User.query.filter_by(user_email=form.email.data).first()
+            if not user or not user.check_password(form.password.data):
+                flash("Invalid credentials...")
+                return redirect(url_for("authentication.log_in_user"))
+            login_user(user, form.stay_loggedin.data)
+            print(f"NOMBRE usuario: {user.user_name}")
+            return (redirect(url_for("authentication.homepage")))
         
-        login_user(user, form.stay_loggedin.data)
+        login_user(men, form.stay_loggedin.data)
         return (redirect(url_for("authentication.homepage")))
     return render_template("login.html", form=form)
 
