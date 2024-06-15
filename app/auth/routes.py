@@ -1,10 +1,10 @@
 from flask import render_template,  flash, redirect, url_for
 from app.auth.forms import *
 from app.auth import authentication
-from app.auth.models import User,Client,Userm,Delivery
+from app.auth.models import User,Client,Userm,Delivery,Service,State
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
-
+from app import db
 def role_required(role):
     def decorator(f):
         @wraps(f)
@@ -112,6 +112,31 @@ def log_in_user():
         return redirect(url_for("authentication.log_in_user"))
     
     return render_template("login.html", form=form)
+
+@authentication.route("/request", methods=["GET","POST"])
+def request():
+    form = RequestForm()
+    if form.validate_on_submit():
+        new_service = Service(
+            Origen=form.origen.data,
+            Destino=form.destion.data,
+            Descripcion=form.Descripcion.data,
+            TipoTransporte=form.transporte.data,
+            NumPaquetes=form.numpaquetes.data,
+            userid=current_user.id
+        )
+        db.session.add(new_service)
+        db.session.commit()
+        new_state = State(
+            serviceid=new_service.Codigo,
+            estado = "solicitado"
+        )
+        db.session.add(new_state)
+        db.session.commit()
+        flash('Service request created successfully!', 'success')
+        flash("Your request has been sent")
+        return redirect(url_for("authentication.homepage"))
+    return render_template("request.html", form = form)
 
 @authentication.route("/homepage")
 @login_required

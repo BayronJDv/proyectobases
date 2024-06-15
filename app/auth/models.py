@@ -122,25 +122,29 @@ class Userm(UserMixin, db.Model):
         db.session.commit()
         return userm
     
-# for transport type
-class Transportt(enum.Enum):
-    tipo1 = "moto"
-    tipo2 = "carro"
-    tipo3 = "camion"
 # modeling service
 class Service(db.Model):
-    __tablename__ = 'Servicio'
+    __tablename__ = 'Servicios'
 
-    Codigo = db.Column(Integer, primary_key=True, autoincrement=True)
-    FechaHoraSolicitud = db.Column(TIMESTAMP, nullable=False)
-    Origen = db.Column(Text)
-    Destino = db.Column(Text)
-    Descripcion = db.Column(Text)
-    TipoTransporte = db.Column(Enum(Transportt), nullable=False)
-    NumPaquetes = db.Column(Integer)
-    userid = db.Column(Integer, db.ForeignKey('users.id'))
-    usermid = db.Column(Integer, db.ForeignKey('usersm.id'))
+    Codigo = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    FechaHoraSolicitud = db.Column(db.DateTime, default=datetime.now)
+    Origen = db.Column(db.String)
+    Destino = db.Column(db.String)
+    Descripcion = db.Column(db.String)
+    TipoTransporte = db.Column(db.String,nullable=False)
+    NumPaquetes = db.Column(db.Integer)
+    userid = db.Column(db.Integer, db.ForeignKey('users.id'))
+    usermid = db.Column(db.Integer, db.ForeignKey('usersm.id'))
+    usuarios = db.relationship('State', backref='Service', lazy=True)
+    
 
+class State(db.Model):
+    __tablename__ = 'Estado'
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    estado = db.Column(db.String(50), nullable=False)
+    imagen = db.Column(db.LargeBinary, nullable=True)
+    fechaac = db.Column(db.DateTime,default=datetime.now)
+    serviceid = db.Column(Integer,db.ForeignKey('Servicios.Codigo'))
 
 # manages the logins of all users
 @login_manager.user_loader
