@@ -1,9 +1,10 @@
 
 from flask import Flask
 from flask_wtf import FlaskForm
-from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField
-from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError
+from wtforms import StringField, SubmitField, PasswordField, BooleanField, SelectField,IntegerField
+from wtforms.validators import DataRequired, Length, Email, EqualTo, ValidationError,NumberRange
 from app.auth.models import User
+
 
 #used to verify 
 def email_exists(form, field):
@@ -44,3 +45,14 @@ class RegistrationDeliveryForm(FlaskForm):
     address= StringField("address", validators=[DataRequired()])
     email= StringField("E-mail", validators=[DataRequired(), Email(), email_exists])
     telephone= StringField("telephone", validators=[DataRequired()])
+
+#used to register a service 
+class RequestForm(FlaskForm):
+    choices = [('moto', 'moto'),
+               ('carro', 'carro'),
+               ('camion', 'camion')]
+    origen = StringField("Origen", validators=[DataRequired()])
+    destion = StringField("Destino", validators=[DataRequired()])
+    transporte = SelectField("tipo de transporte", choices = choices, validators=[DataRequired()])
+    numpaquetes = IntegerField("Nro paquetes", validators=[DataRequired(), NumberRange(min=0, max=50)])
+    Descripcion = StringField("Descripcion", validators=[DataRequired()])
