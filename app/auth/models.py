@@ -2,7 +2,8 @@ from datetime import datetime
 from app import db, bcrypt
 from app import login_manager
 from flask_login import UserMixin
-from sqlalchemy import Sequence
+from sqlalchemy import *
+import enum
 
 class Client(db.Model):
     __tablename__ = 'clients'
@@ -60,7 +61,8 @@ class User(UserMixin, db.Model):
     user_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     cid = db.Column(db.Integer, db.ForeignKey('clients.cid'), nullable=False)
-
+    
+    servicios = db.relationship('Service', backref='User', lazy=True)
     def check_password(self, password):
         return bcrypt.check_password_hash(self.user_password, password)
     
@@ -87,6 +89,7 @@ class Userm(UserMixin, db.Model):
     userm_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     did = db.Column(db.Integer, db.ForeignKey('deliverys.did'), nullable=False)
+    servicios = db.relationship('Service', backref='Userm', lazy=True)
 
     def checkm_password(self, password):
         return bcrypt.check_password_hash(self.userm_password, password)
@@ -102,8 +105,28 @@ class Userm(UserMixin, db.Model):
         db.session.add(userm)
         db.session.commit()
         return userm
+    
+# for transport type
+class Transportt(enum.Enum):
+    tipo1 = "moto"
+    tipo2 = "carro"
+    tipo3 = "camion"
+# modeling service
+class Service(db.Model):
+    __tablename__ = 'Servicio'
+
+    Codigo = db.Column(Integer, primary_key=True, autoincrement=True)
+    FechaHoraSolicitud = db.Column(TIMESTAMP, nullable=False)
+    Origen = db.Column(Text)
+    Destino = db.Column(Text)
+    Descripcion = db.Column(Text)
+    TipoTransporte = db.Column(Enum(Transportt), nullable=False)
+    NumPaquetes = db.Column(Integer)
+    userid = db.Column(Integer, db.ForeignKey('users.id'))
+    usermid = db.Column(Integer, db.ForeignKey('usersm.id'))
 
 
+# manages the logins of all users
 @login_manager.user_loader
 def load_user(user_id):
     # Intenta cargar como mensajes primero

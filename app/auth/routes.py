@@ -12,12 +12,23 @@ def register_user():
         return redirect(url_for("authentication.homepage"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        User.create_user(
+        tipo = form.type.data
+        if tipo == "client":
+            User.create_user(
+                user=form.name.data,
+                email=form.email.data,
+                password=form.password.data,
+                address=form.address.data,
+                clientid=form.clientid.data
+            )
+            flash("Registration Done...")
+            return redirect(url_for("authentication.log_in_user"))
+        Userm.create_userm(
             user=form.name.data,
             email=form.email.data,
             password=form.password.data,
             address=form.address.data,
-            clientid=form.clientid.data
+            deliveryid=form.clientid.data
         )
         flash("Registration Done...")
         return redirect(url_for("authentication.log_in_user"))
