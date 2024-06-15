@@ -61,6 +61,7 @@ class User(UserMixin, db.Model):
     user_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     cid = db.Column(db.Integer, db.ForeignKey('clients.cid'), nullable=False)
+    role = db.Column(db.String(20), default='user')
 
     def check_password(self, password):
         return bcrypt.check_password_hash(self.user_password, password)
@@ -72,6 +73,19 @@ class User(UserMixin, db.Model):
                    user_password=bcrypt.generate_password_hash(password).decode("utf-8"),
                    user_adress=address,
                    cid=clientid
+        )
+        db.session.add(user)
+        db.session.commit()
+        return user
+    
+    @classmethod
+    def create_admin(cls, user, email, password,address, clientid):
+        user = cls(user_name=user,
+                   user_email=email,
+                   user_password=bcrypt.generate_password_hash(password).decode("utf-8"),
+                   user_adress=address,
+                   cid=clientid,
+                   role='admin'
         )
         db.session.add(user)
         db.session.commit()
@@ -89,6 +103,7 @@ class Userm(UserMixin, db.Model):
     userm_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     did = db.Column(db.Integer, db.ForeignKey('deliverys.did'), nullable=False)
+    role = db.Column(db.String(20), default='userm')
 
     def checkm_password(self, password):
         return bcrypt.check_password_hash(self.userm_password, password)
