@@ -1,7 +1,7 @@
 from flask import render_template,  flash, redirect, url_for
 from app.auth.forms import *
 from app.auth import authentication
-from app.auth.models import User,Client,Userm
+from app.auth.models import User,Client,Userm,Delivery
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 
@@ -25,12 +25,23 @@ def register_user():
         return redirect(url_for("authentication.index"))
     form = RegistrationForm()
     if form.validate_on_submit():
-        User.create_user(
+        tipo = form.type.data
+        if tipo == "client":
+            User.create_user(
+                user=form.name.data,
+                email=form.email.data,
+                password=form.password.data,
+                address=form.address.data,
+                clientid=form.clientid.data
+            )
+            flash("Registration Done...")
+            return redirect(url_for("authentication.log_in_user"))
+        Userm.create_userm(
             user=form.name.data,
             email=form.email.data,
             password=form.password.data,
             address=form.address.data,
-            clientid=form.clientid.data
+            deliveryid=form.clientid.data
         )
         flash("Registration Done...")
         return redirect(url_for("authentication.log_in_user"))
@@ -52,6 +63,27 @@ def register_client():
         flash("Registration Done... Now you can create a user with yout client id ")
         return redirect(url_for("authentication.register_user")) 
     return render_template("rclient.html", form=form)
+
+@authentication.route("/registerdelivery", methods=["GET","POST"])
+def register_delivery():
+    if current_user.is_authenticated:
+        flash("you are already logged in the system")
+        return redirect(url_for("authentication.homepage"))
+    form = RegistrationDeliveryForm()
+    if form.validate_on_submit():
+        Delivery.create_delivery(
+            name = form.name.data,
+            address = form.address.data,
+            email= form.email.data,
+            telephone= form.telephone.data
+        )
+        flash("Registration Done... Now you can create a userm with your id ")
+        return redirect(url_for("authentication.register_user")) 
+    return render_template("rdelivery.html", form=form)
+
+@authentication.route("/")
+def index():
+    return render_template("index.html")
 
 @authentication.route("/login", methods=["GET","POST"])
 def log_in_user():
@@ -80,10 +112,6 @@ def log_in_user():
         return redirect(url_for("authentication.log_in_user"))
     
     return render_template("login.html", form=form)
-
-@authentication.route("/")
-def index():
-    return render_template("index.html")
 
 @authentication.route("/homepage")
 @login_required

@@ -2,7 +2,8 @@ from datetime import datetime
 from app import db, bcrypt
 from app import login_manager
 from flask_login import UserMixin
-from sqlalchemy import Sequence
+from sqlalchemy import *
+import enum
 
 class Client(db.Model):
     __tablename__ = 'clients'
@@ -55,12 +56,13 @@ class User(UserMixin, db.Model):
     id = db.Column(db.Integer, user_id_seq, server_default=user_id_seq.next_value(), primary_key=True)
 
     user_name = db.Column(db.String(50))
-    user_name = db.Column(db.String(20))
     user_email = db.Column(db.String(60), unique=True,index=True)
     user_password = db.Column(db.String(80))
     user_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     cid = db.Column(db.Integer, db.ForeignKey('clients.cid'), nullable=False)
+    
+    servicios = db.relationship('Service', backref='User', lazy=True)
     role = db.Column(db.String(20), default='user')
 
     def check_password(self, password):
@@ -97,12 +99,12 @@ class Userm(UserMixin, db.Model):
 
     id = db.Column(db.Integer, userm_id_seq, server_default=userm_id_seq.next_value(), primary_key=True)
     userm_name = db.Column(db.String(50))
-    userm_name = db.Column(db.String(20))
     userm_email = db.Column(db.String(60), unique=True,index=True)
     userm_password = db.Column(db.String(80))
     userm_adress = db.Column(db.String(200))
     create_date = db.Column(db.DateTime, default=datetime.now)
     did = db.Column(db.Integer, db.ForeignKey('deliverys.did'), nullable=False)
+    servicios = db.relationship('Service', backref='Userm', lazy=True)
     role = db.Column(db.String(20), default='userm')
 
     def checkm_password(self, password):
@@ -119,8 +121,28 @@ class Userm(UserMixin, db.Model):
         db.session.add(userm)
         db.session.commit()
         return userm
+    
+# for transport type
+class Transportt(enum.Enum):
+    tipo1 = "moto"
+    tipo2 = "carro"
+    tipo3 = "camion"
+# modeling service
+class Service(db.Model):
+    __tablename__ = 'Servicio'
+
+    Codigo = db.Column(Integer, primary_key=True, autoincrement=True)
+    FechaHoraSolicitud = db.Column(TIMESTAMP, nullable=False)
+    Origen = db.Column(Text)
+    Destino = db.Column(Text)
+    Descripcion = db.Column(Text)
+    TipoTransporte = db.Column(Enum(Transportt), nullable=False)
+    NumPaquetes = db.Column(Integer)
+    userid = db.Column(Integer, db.ForeignKey('users.id'))
+    usermid = db.Column(Integer, db.ForeignKey('usersm.id'))
 
 
+# manages the logins of all users
 @login_manager.user_loader
 def load_user(user_id):
     # Intenta cargar como mensajes primero

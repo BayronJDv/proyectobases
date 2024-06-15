@@ -39,6 +39,7 @@ with easydel.app_context():
             address="test-address",
             deliveryid=1
         )
+        # create a client and a user for testing 
     if not Client.query.filter_by(client_name="testclient").first():
         Client.create_client(
             name="testclient",
