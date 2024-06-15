@@ -113,10 +113,6 @@ def log_in_user():
     
     return render_template("login.html", form=form)
 
-@authentication.route("/")
-def index():
-    return render_template("index.html")
-
 @authentication.route("/homepage")
 @login_required
 @role_required('user')
