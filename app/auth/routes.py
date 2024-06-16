@@ -134,7 +134,6 @@ def request():
         db.session.add(new_state)
         db.session.commit()
         flash('Service request created successfully!', 'success')
-        flash("Your request has been sent")
         return redirect(url_for("authentication.homepage"))
     return render_template("request.html", form = form)
 
