@@ -15,6 +15,7 @@ class Client(db.Model):
     client_telephone = db.Column(db.String(20))
 
     usuarios = db.relationship('User', backref='client', lazy=True)
+    sucursales = db.relationship('Sucursal', backref='client', lazy=True)
 
     @classmethod
     def create_client(cls, name, address, email,telephone):
@@ -145,6 +146,14 @@ class State(db.Model):
     imagen = db.Column(db.LargeBinary, nullable=True)
     fechaac = db.Column(db.DateTime,default=datetime.now)
     serviceid = db.Column(Integer,db.ForeignKey('servicios.Codigo'))
+
+class Sucursal(db.Model):
+    __tablename__ ='sucursales'
+    sid = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    sucursal_name = db.Column(db.String(100), nullable=False)
+    sucursal_adress = db.Column(db.String(200))
+    sucursal_telephone = db.Column(db.String(20))
+    clientid = db.Column(Integer,db.ForeignKey('clients.cid'))
 
 # manages the logins of all users
 @login_manager.user_loader

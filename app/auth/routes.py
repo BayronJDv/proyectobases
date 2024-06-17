@@ -1,7 +1,7 @@
 from flask import render_template, flash, redirect, url_for, jsonify, request
 from app.auth.forms import *
 from app.auth import authentication
-from app.auth.models import User,Client,Userm,Delivery,Service,State
+from app.auth.models import User,Client,Userm,Delivery,Service,State,Sucursal
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app import db
@@ -287,6 +287,26 @@ def myrequest():
     else:
         flash("Aun no has realizado ningun pedido")
         return redirect(url_for("authentication.homepage"))
+
+@authentication.route("/rsucursal", methods=["POST","GET"])
+def rsucursal():
+    form = RegistrationSucursalForm()
+    if form.validate_on_submit():
+        id = current_user.id
+        losid = db.session.query(Client.cid).join(User, Client.cid==User.cid).filter(User.id == id).first()
+        miid = losid[0]
+        new_sucursal = Sucursal(
+            sucursal_name=form.name.data,
+            sucursal_adress=form.address.data,
+            sucursal_telephone=form.telephone.data,
+            clientid = miid
+        )
+        db.session.add(new_sucursal)
+        db.session.commit()
+        flash('Sucursal created successfully!','success')
+        return redirect(url_for("authentication.homepage"))
+    return render_template("rsucursal.html",form = form )
+
 
 @authentication.app_errorhandler(404)
 def page_not_found(error):
