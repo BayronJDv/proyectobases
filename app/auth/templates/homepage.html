@@ -19,7 +19,7 @@
               <a class="nav-link" href="{{ url_for('authentication.request')}}">Pedir Servicio</a>
             </li>
             <li class="nav-item">
-              <a class="nav-link" href="#">Pricing</a>
+              <a class="nav-link" href="{{ url_for('authentication.myrequest')}}">Mis servicios</a>
             </li>
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdownMenuLink" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -28,7 +28,7 @@
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" href="{{ url_for('authentication.log_out_user')}}">cerrar sesion</a>
                 <a class="dropdown-item" href="#">MI informacion</a>
-                <a class="dropdown-item" href="#">Borrar Cuenta</a>
+                <a class="dropdown-item" href="{{ url_for('authentication.delete')}}">Borrar Cuenta</a>
               </div>
             </li>
           </ul>
