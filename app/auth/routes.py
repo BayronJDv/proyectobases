@@ -214,7 +214,6 @@ def change_estado_route():
     
     return jsonify({'message': f'Pedido con código {codigo} aceptado!'})
 
-
 @authentication.route("/homepagem")
 @login_required
 @role_required('userm')
@@ -240,12 +239,16 @@ def log_out_user():
 @login_required
 def delete():
     user = User.query.get(current_user.id)
+    userm = Userm.query.get(current_user.id)
     if user:
         logout_user()
         db.session.delete(user)
         db.session.commit()      
         return redirect(url_for("authentication.log_in_user"))
-
+    logout_user()
+    db.session.delete(userm)
+    db.session.commit()      
+    return redirect(url_for("authentication.log_in_user"))
 @authentication.route("/myrequest", methods=["POST","GET"])
 def myrequest():
     miid = current_user.id
