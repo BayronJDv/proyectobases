@@ -147,7 +147,7 @@ def UserRequest():
     if form.validate_on_submit():
         new_service = Service(
             Origen=form.origen.data,
-            Destino=form.destion.data,
+            Destino=form.destino.data,
             Descripcion=form.Descripcion.data,
             TipoTransporte=form.transporte.data,
             NumPaquetes=form.numpaquetes.data,
