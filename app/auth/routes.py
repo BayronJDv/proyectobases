@@ -250,7 +250,11 @@ def delete():
 def myrequest():
     miid = current_user.id
     myrequest = Service.query.filter_by(userid = miid)
-    return render_template("myrequest.html",myrequest=myrequest)
+    if myrequest.count() > 0:
+        return render_template("myrequest.html",myrequest=myrequest)
+    else:
+        flash("Aun no has realizado ningun pedido")
+        return redirect(url_for("authentication.homepage"))
 
 @authentication.app_errorhandler(404)
 def page_not_found(error):
