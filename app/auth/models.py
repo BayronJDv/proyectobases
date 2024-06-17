@@ -62,7 +62,7 @@ class User(UserMixin, db.Model):
     create_date = db.Column(db.DateTime, default=datetime.now)
     cid = db.Column(db.Integer, db.ForeignKey('clients.cid'), nullable=False)
     
-    servicios = db.relationship('Service', backref='User', lazy=True)
+    servicios = db.relationship('Service', backref='User', lazy=True,cascade="all, delete-orphan")
     role = db.Column(db.String(20), default='user')
 
     def check_password(self, password):

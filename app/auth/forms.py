@@ -52,7 +52,7 @@ class RequestForm(FlaskForm):
                ('carro', 'carro'),
                ('camion', 'camion')]
     origen = StringField("Origen", validators=[DataRequired()])
-    destion = StringField("Destino", validators=[DataRequired()])
+    destino = StringField("Destino", validators=[DataRequired()])
     transporte = SelectField("tipo de transporte", choices = choices, validators=[DataRequired()])
     numpaquetes = IntegerField("Nro paquetes", validators=[DataRequired(), NumberRange(min=0, max=50)])
     Descripcion = StringField("Descripcion", validators=[DataRequired()])
