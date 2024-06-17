@@ -114,8 +114,10 @@ def log_in_user():
     
     return render_template("login.html", form=form)
 
-@authentication.route("/request", methods=["GET","POST"])
-def request():
+@authentication.route("/UserRequest", methods=["GET","POST"])
+@login_required
+@role_required('user')
+def UserRequest():
     form = RequestForm()
     if form.validate_on_submit():
         new_service = Service(
@@ -136,7 +138,7 @@ def request():
         db.session.commit()
         flash('Service request created successfully!', 'success')
         return redirect(url_for("authentication.homepage"))
-    return render_template("request.html", form = form)
+    return render_template("UserRequest.html", form = form)
 
 @authentication.route("/homepage")
 @login_required
