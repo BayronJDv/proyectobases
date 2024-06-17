@@ -5,7 +5,6 @@ from app.auth.models import User,Client,Userm,Delivery,Service,State
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app import db
-import time
 import base64
 def role_required(role):
     def decorator(f):
@@ -171,6 +170,31 @@ def UserRequest():
 @role_required('user')
 def homepage():
     return render_template("homepage.html")
+
+def cambiarEstado(codigo,numE,foto,usuario):
+    estado = State.query.filter_by(serviceid=codigo).first()
+    servicio = Service.query.filter_by(Codigo=codigo).first()
+    foto_binario = base64.b64decode(foto)
+    match numE:
+        case 2:
+            estado.estado='Recogido'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case 3:
+            estado.estado='Entregado'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case _:
+            print("La pagina fue modificada, tenga cuidado")
+    try:
+        db.session.add(estado)
+        db.session.add(servicio)
+        db.session.commit()
+        print("Estado actualizado correctamente")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al actualizar el estado: {str(e)}")
+
 
 @authentication.route('/change_estado', methods=['POST'])
 @login_required
