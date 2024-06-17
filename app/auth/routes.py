@@ -143,6 +143,9 @@ def log_in_user():
 @login_required
 @role_required('user')
 def UserRequest():
+    with open(f'espera.jpeg', 'rb') as img_file:
+        encoded_string = base64.b64encode(img_file.read())
+    
     form = RequestForm()
     if form.validate_on_submit():
         new_service = Service(
@@ -157,7 +160,8 @@ def UserRequest():
         db.session.commit()
         new_state = State(
             serviceid=new_service.Codigo,
-            estado = "solicitado"
+            estado = "solicitado",
+            imagen = base64.b64decode(encoded_string)
         )
         db.session.add(new_state)
         db.session.commit()
@@ -170,6 +174,17 @@ def UserRequest():
 @role_required('user')
 def homepage():
     return render_template("homepage.html")
+
+@authentication.route('/get_imagen', methods=['POST'])
+@login_required
+@role_required('user')
+def get_imagen():
+    data = request.get_json()
+    codigo = data['codigo']
+    estado = State.query.filter_by(serviceid=codigo).first()
+    encoded_string = base64.b64encode(estado.imagen).decode('utf-8')
+
+    return jsonify({'imagen_base64': encoded_string})    
 
 def cambiarEstado(codigo,numE,foto,usuario):
     estado = State.query.filter_by(serviceid=codigo).first()
@@ -190,7 +205,6 @@ def cambiarEstado(codigo,numE,foto,usuario):
         db.session.add(estado)
         db.session.add(servicio)
         db.session.commit()
-        print("Estado actualizado correctamente")
     except Exception as e:
         db.session.rollback()
         print(f"Error al actualizar el estado: {str(e)}")
@@ -206,11 +220,11 @@ def change_estado_route():
         return jsonify({'error': 'No se recibieron datos JSON'}), 400 
 
     codigo = data['codigo']
-    numE = data['numE']
+    nume = data['nume']
     foto = data['foto']
     usuario = data['usuario']
     
-    cambiarEstado(codigo, numE, foto, usuario)
+    cambiarEstado(codigo, nume, foto, usuario)
     
     return jsonify({'message': f'Pedido con código {codigo} aceptado!'})
 
@@ -218,8 +232,22 @@ def change_estado_route():
 @login_required
 @role_required('userm')
 def homepagem():
+    return render_template("homepagem.html")
+
+@authentication.route("/accept")
+@login_required
+@role_required('userm')
+def accept():
     pedidos = Service.query.filter(Service.usermid.is_(None)).all()
-    return render_template("homepagem.html",pedidos=pedidos)
+    return render_template("accept.html",pedidos=pedidos)
+
+@authentication.route("/myservices", methods=["GET"])
+@login_required
+@role_required('userm')
+def myservices():
+    user_id = current_user.id
+    misPedidos = Service.query.filter_by(usermid=user_id).all()
+    return render_template("myservices.html", misPedidos=misPedidos)
 
 @authentication.route("/admin")
 @login_required

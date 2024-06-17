@@ -72,5 +72,82 @@
     {%endif%}
 {% endblock %}
 {% block content %}
+ <div class="container">
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-9">
+            {% for pedido in pedidos %}
+            <div class="card">
+                <div class="card-header">
+                codigo de pedido : {{pedido.Codigo}}
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Desde {{ pedido.Origen }}, hasta {{ pedido.Destino }}</h5>
+                    <h6 class="card-subtitle mb-2 text-body-secondary">{{ pedido.NumPaquetes }} paquete(s) en {{ pedido.TipoTransporte }}</h6>
+                    <p class="card-text">{{ pedido.Descripcion }}</p>
+                    <button class="btn btn-primary aceptar-btn" data-codigo="{{ pedido.Codigo }}" data-nume="2" data-usuario="{{ current_user.id }}">Aceptar</button>
+                    <input type="file" class="file-input" style="display: none;" accept="image/*">
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.entregar-btn').on('click', function() {
+            var button = $(this);
+            var cardBody = button.closest('.card-body');
+            var fileInput = cardBody.find('.file-input');
+
+            fileInput.click();  // Iniciar la GUI de selección de archivo
+
+            fileInput.on('change', function() {
+                var file = fileInput[0].files[0];
+                if (!file) {
+                    alert('Por favor, seleccione una imagen.');
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var img = new Image();
+                    img.src = event.target.result;
+                    img.onload = function() {
+                        var canvas = document.createElement('canvas');
+                        var ctx = canvas.getContext('2d');
+                        canvas.width = img.width;
+                        canvas.height = img.height;
+                        ctx.drawImage(img, 0, 0);
+
+                        // Convertir la imagen a JPEG
+                        var foto = canvas.toDataURL('image/jpeg').split(',')[1];  // Obtener la parte de datos base64
+                        var codigo = button.data('codigo');
+                        var nume = button.data('nume');
+                        var usuario = button.data('usuario');
+
+                        $.ajax({
+                            url: "/change_estado",
+                            type: 'POST',
+                            contentType: 'application/json',
+                            data: JSON.stringify({ codigo: codigo, nume: nume, foto: foto, usuario: usuario }),
+                            success: function(response) {
+                                alert(response.message);
+                                location.reload();  // Recarga la página sin cambiar la URL
+                            },
+                            error: function(error) {
+                                alert('Error al aceptar el pedido');
+                            }
+                        });
+                    };
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    });
+</script>
+
+ </div>
 
  {% endblock content%}

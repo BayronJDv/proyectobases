@@ -4,25 +4,61 @@
 
 {% block content %}
 <div class="container">
-    <div class="row justify-content-center mt-5">
-        <div class="col-md-9">
-    {% for request in myrequest %}
-
-    <div class="card">
-        <div class="card-header">
-           codigo de pedido : {{request.Codigo}}
-        </div>
-        <div class="card-body">
-          <h5 class="card-title">Origen = {{request.Origen}} , Destino = {{request.Destino}} </h5>
-          <p class="card-text"> Son {{request.NumPaquetes}} pasquete(s) que contienen : {{request.Descripcion}}</p>
-          <a href="#" class="btn btn-primary">Mas detalles</a>
-        </div>
+  <div class="row justify-content-center mt-5">
+      <div class="col-md-9">
+          {% for request in myrequest %}
+              <div class="card mb-4">
+                  <div class="card-header">
+                      codigo de pedido: {{ request.Codigo }}
+                  </div>
+                  <div class="card-body">
+                      <h5 class="card-title">Origen = {{ request.Origen }}, Destino = {{ request.Destino }}</h5>
+                      <p class="card-text">Son {{ request.NumPaquetes }} paquete(s) que contienen: {{ request.Descripcion }}</p>
+                      <button class="btn btn-primary mas-detalles-btn" data-codigo="{{ request.Codigo }}">Mas detalles</button>
+                      <div class="row justify-content-center mt-5">
+                        <div class="imagen-contenedor mt-3" style="display: none;">
+                          <img src="" class="img-fluid" alt="Imagen del pedido">
+                          <button class="btn btn-secondary mt-2 ocultar-imagen-btn">Mostrar menos</button>
+                        </div>
+                      </div>
+                      
+                  </div>
+              </div>
+          {% endfor %}
       </div>
-
-    {% endfor %}
-
-        </div>
-    </div>
+  </div>
 </div>
+
+<script>
+  $(document).ready(function() {
+      $('.mas-detalles-btn').on('click', function() {
+          var button = $(this);
+          var cardBody = button.closest('.card-body');
+          var imagenContenedor = cardBody.find('.imagen-contenedor');
+          var codigo = button.data('codigo');
+
+          $.ajax({
+              url: "/get_imagen",
+              type: 'POST',
+              contentType: 'application/json',
+              data: JSON.stringify({ codigo: codigo }),
+              success: function(response) {
+                  var imgSrc = 'data:image/jpeg;base64,' + response.imagen_base64;
+                  imagenContenedor.find('img').attr('src', imgSrc);
+                  imagenContenedor.slideDown();
+              },
+              error: function(error) {
+                  alert('Error al obtener la imagen del pedido');
+              }
+          });
+      });
+
+      $('.ocultar-imagen-btn').on('click', function() {
+          var button = $(this);
+          var imagenContenedor = button.closest('.imagen-contenedor');
+          imagenContenedor.slideUp();
+      });
+  });
+</script>
 
 {% endblock content %}
