@@ -6,6 +6,7 @@ from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app import db
 import time
+import base64
 def role_required(role):
     def decorator(f):
         @wraps(f)
