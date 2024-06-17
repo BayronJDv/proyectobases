@@ -7,19 +7,20 @@
     <div class="row justify-content-center mt-5">
         <div class="col-md-9">
     {% for request in myrequest %}
+
     <div class="card">
         <div class="card-header">
-        {{request.Codigo}}
+           codigo de pedido : {{request.Codigo}}
         </div>
         <div class="card-body">
-        <blockquote class="blockquote mb-0">
-            <p>Origen = {{request.Origen}} , Destino = {{request.Destino}} ,  Tipo transporte = {{request.TipoTransporte}} </p>
-            <p>Num paquetes = {{request.NumPaquetes}} , Descripcion = {{request.Descripcion}} </p>
-            <footer class="blockquote-footer">Someone famous in <cite title="Source Title">Source Title</cite></footer>
-        </blockquote>
+          <h5 class="card-title">Origen = {{request.Origen}} , Destino = {{request.Destino}} </h5>
+          <p class="card-text"> Son {{request.NumPaquetes}} pasquete(s) que contienen : {{request.Descripcion}}</p>
+          <a href="#" class="btn btn-primary">Mas detalles</a>
         </div>
-    </div>
+      </div>
+
     {% endfor %}
+
         </div>
     </div>
 </div>

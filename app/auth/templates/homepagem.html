@@ -74,21 +74,26 @@
 {% block content %}
  <div class="container">
 
-    <h3>HOMEPAGE Easy Delivery</h3>
-  <h4 style="color: #ff0000;">  Logged in system as {{ current_user.userm_name.title()}}</h4>
+    <div class="row justify-content-center mt-5">
+        <div class="col-md-9">
 
-  <div class="container">
     {% for pedido in pedidos %}
-    <div class="card mb-2" id="pedido-{{ pedido.Codigo }}">
+    <div class="card">
+        <div class="card-header">
+           codigo de pedido : {{pedido.Codigo}}
+        </div>
         <div class="card-body">
             <h5 class="card-title">Desde {{ pedido.Origen }}, hasta {{ pedido.Destino }}</h5>
             <h6 class="card-subtitle mb-2 text-body-secondary">{{ pedido.NumPaquetes }} paquete(s) en {{ pedido.TipoTransporte }}</h6>
             <p class="card-text">{{ pedido.Descripcion }}</p>
             <button class="btn btn-primary aceptar-btn" data-codigo="{{ pedido.Codigo }}" data-nume="2" data-usuario="{{ current_user.id }}">Aceptar</button>
             <input type="file" class="file-input" style="display: none;" accept="image/*">
+            </div>
         </div>
     </div>
+
     {% endfor %}
+    </div>
 </div>
 
 <script>
