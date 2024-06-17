@@ -56,3 +56,9 @@ class RequestForm(FlaskForm):
     transporte = SelectField("tipo de transporte", choices = choices, validators=[DataRequired()])
     numpaquetes = IntegerField("Nro paquetes", validators=[DataRequired(), NumberRange(min=0, max=50)])
     Descripcion = StringField("Descripcion", validators=[DataRequired()])
+
+class RegistrationSucursalForm(FlaskForm):
+    name = StringField("Name", validators=[DataRequired()])
+    address = StringField("address", validators=[DataRequired()])
+    telephone= StringField("telephone", validators=[DataRequired()])
+    
