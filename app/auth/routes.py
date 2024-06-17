@@ -19,6 +19,31 @@ def role_required(role):
         return decorated_function
     return decorator
 
+def cambiarEstado(codigo,numE,foto,usuario):
+    estado = State.query.filter_by(serviceid=codigo).first()
+    servicio = Service.query.filter_by(Codigo=codigo).first()
+    foto_binario = base64.b64decode(foto)
+    match numE:
+        case 2:
+            estado.estado='Recogido'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case 3:
+            estado.estado='Entregado'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case _:
+            print("La pagina fue modificada, tenga cuidado")
+    try:
+        db.session.add(estado)
+        db.session.add(servicio)
+        db.session.commit()
+        print("Estado actualizado correctamente")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al actualizar el estado: {str(e)}")
+
+
 @authentication.route("/register", methods=["GET","POST"])
 def register_user():
     if current_user.is_authenticated:
@@ -146,11 +171,31 @@ def UserRequest():
 def homepage():
     return render_template("homepage.html")
 
+@authentication.route('/change_estado', methods=['POST'])
+@login_required
+@role_required('userm')
+def change_estado_route():
+    
+    data = request.get_json()
+    if data is None:
+        return jsonify({'error': 'No se recibieron datos JSON'}), 400 
+
+    codigo = data['codigo']
+    numE = data['numE']
+    foto = data['foto']
+    usuario = data['usuario']
+    
+    cambiarEstado(codigo, numE, foto, usuario)
+    
+    return jsonify({'message': f'Pedido con código {codigo} aceptado!'})
+
+
 @authentication.route("/homepagem")
 @login_required
 @role_required('userm')
 def homepagem():
-    return render_template("homepagem.html")
+    pedidos = Service.query.filter(Service.usermid.is_(None)).all()
+    return render_template("homepagem.html",pedidos=pedidos)
 
 @authentication.route("/admin")
 @login_required
