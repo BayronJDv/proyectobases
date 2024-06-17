@@ -1,10 +1,11 @@
-from flask import render_template,  flash, redirect, url_for
+from flask import render_template, flash, redirect, url_for, jsonify, request
 from app.auth.forms import *
 from app.auth import authentication
 from app.auth.models import User,Client,Userm,Delivery,Service,State
 from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app import db
+import base64
 def role_required(role):
     def decorator(f):
         @wraps(f)
@@ -113,8 +114,10 @@ def log_in_user():
     
     return render_template("login.html", form=form)
 
-@authentication.route("/request", methods=["GET","POST"])
-def request():
+@authentication.route("/UserRequest", methods=["GET","POST"])
+@login_required
+@role_required('user')
+def UserRequest():
     form = RequestForm()
     if form.validate_on_submit():
         new_service = Service(
@@ -135,7 +138,7 @@ def request():
         db.session.commit()
         flash('Service request created successfully!', 'success')
         return redirect(url_for("authentication.homepage"))
-    return render_template("request.html", form = form)
+    return render_template("UserRequest.html", form = form)
 
 @authentication.route("/homepage")
 @login_required
@@ -143,11 +146,56 @@ def request():
 def homepage():
     return render_template("homepage.html")
 
+def cambiarEstado(codigo,numE,foto,usuario):
+    estado = State.query.filter_by(serviceid=codigo).first()
+    servicio = Service.query.filter_by(Codigo=codigo).first()
+    foto_binario = base64.b64decode(foto)
+    match numE:
+        case 2:
+            estado.estado='Recogido'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case 3:
+            estado.estado='Entregado'
+            estado.imagen=foto_binario
+            servicio.usermid=usuario
+        case _:
+            print("La pagina fue modificada, tenga cuidado")
+    try:
+        db.session.add(estado)
+        db.session.add(servicio)
+        db.session.commit()
+        print("Estado actualizado correctamente")
+    except Exception as e:
+        db.session.rollback()
+        print(f"Error al actualizar el estado: {str(e)}")
+
+
+@authentication.route('/change_estado', methods=['POST'])
+@login_required
+@role_required('userm')
+def change_estado_route():
+    
+    data = request.get_json()
+    if data is None:
+        return jsonify({'error': 'No se recibieron datos JSON'}), 400 
+
+    codigo = data['codigo']
+    numE = data['numE']
+    foto = data['foto']
+    usuario = data['usuario']
+    
+    cambiarEstado(codigo, numE, foto, usuario)
+    
+    return jsonify({'message': f'Pedido con código {codigo} aceptado!'})
+
+
 @authentication.route("/homepagem")
 @login_required
 @role_required('userm')
 def homepagem():
-    return render_template("homepagem.html")
+    pedidos = Service.query.filter(Service.usermid.is_(None)).all()
+    return render_template("homepagem.html",pedidos=pedidos)
 
 @authentication.route("/admin")
 @login_required

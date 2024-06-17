@@ -124,7 +124,7 @@ class Userm(UserMixin, db.Model):
     
 # modeling service
 class Service(db.Model):
-    __tablename__ = 'Servicios'
+    __tablename__ = 'servicios'
 
     Codigo = db.Column(db.Integer, primary_key=True, autoincrement=True)
     FechaHoraSolicitud = db.Column(db.DateTime, default=datetime.now)
@@ -139,12 +139,12 @@ class Service(db.Model):
     
 
 class State(db.Model):
-    __tablename__ = 'Estado'
+    __tablename__ = 'estado'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     estado = db.Column(db.String(50), nullable=False)
     imagen = db.Column(db.LargeBinary, nullable=True)
     fechaac = db.Column(db.DateTime,default=datetime.now)
-    serviceid = db.Column(Integer,db.ForeignKey('Servicios.Codigo'))
+    serviceid = db.Column(Integer,db.ForeignKey('servicios.Codigo'))
 
 # manages the logins of all users
 @login_manager.user_loader

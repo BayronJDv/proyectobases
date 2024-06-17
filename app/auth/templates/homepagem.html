@@ -5,7 +5,65 @@
  <div class="container">
 
     <h3>HOMEPAGE Easy Delivery</h3>
-  <h4 style="color: #ff0000;">  MM Logged in system as {{ current_user.userm_name.title()}}</h4>
+  <h4 style="color: #ff0000;">  Logged in system as {{ current_user.userm_name.title()}}</h4>
+
+  <div class="container">
+    {% for pedido in pedidos %}
+    <div class="card mb-2" id="pedido-{{ pedido.Codigo }}">
+        <div class="card-body">
+            <h5 class="card-title">Desde {{ pedido.Origen }}, hasta {{ pedido.Destino }}</h5>
+            <h6 class="card-subtitle mb-2 text-body-secondary">{{ pedido.NumPaquetes }} paquete(s) en {{ pedido.TipoTransporte }}</h6>
+            <p class="card-text">{{ pedido.Descripcion }}</p>
+            <button class="btn btn-primary aceptar-btn" data-codigo="{{ pedido.Codigo }}" data-nume="2" data-usuario="{{ current_user.id }}">Aceptar</button>
+            <input type="file" class="file-input" style="display: none;" accept="image/*">
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<script>
+    $(document).ready(function() {
+        $('.aceptar-btn').on('click', function() {
+            var button = $(this);
+            var cardBody = button.closest('.card-body');
+            var fileInput = cardBody.find('.file-input');
+
+            fileInput.click();  // Iniciar la GUI de selección de archivo
+
+            fileInput.on('change', function() {
+                var file = fileInput[0].files[0];
+                if (!file) {
+                    alert('Por favor, seleccione una imagen.');
+                    return;
+                }
+
+                var reader = new FileReader();
+                reader.onload = function(event) {
+                    var foto = event.target.result.split(',')[1];  // Obtener la parte de datos base64
+                    var codigo = button.data('codigo');
+                    var numE = button.data('nume');
+                    var usuario = button.data('usuario');
+
+                    $.ajax({
+                        url: "/change_estado",
+                        type: 'POST',
+                        contentType: 'application/json',
+                        data: JSON.stringify({ codigo: codigo, numE: numE, foto: foto, usuario: usuario }),
+                        success: function(response) {
+                            alert(response.message);
+                            location.reload();  // Recarga la página sin cambiar la URL
+                        },
+                        error: function(error) {
+                            alert('Error al aceptar el pedido');
+                        }
+                    });
+                };
+
+                reader.readAsDataURL(file);
+            });
+        });
+    });
+</script>
 
  </div>
 
