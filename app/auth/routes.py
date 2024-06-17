@@ -281,8 +281,9 @@ def delete():
 def myrequest():
     miid = current_user.id
     myrequest = Service.query.filter_by(userid = miid)
+    estado = db.session.query(State).join(Service, State.serviceid == Service.Codigo).filter(Service.userid == miid).first()
     if myrequest.count() > 0:
-        return render_template("myrequest.html",myrequest=myrequest)
+        return render_template("myrequest.html",myrequest=myrequest, estado=estado)
     else:
         flash("Aun no has realizado ningun pedido")
         return redirect(url_for("authentication.homepage"))

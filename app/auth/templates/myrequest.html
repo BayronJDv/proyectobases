@@ -8,12 +8,14 @@
       <div class="col-md-9">
           {% for request in myrequest %}
               <div class="card mb-4">
-                  <div class="card-header">
-                      codigo de pedido: {{ request.Codigo }}
-                  </div>
+                <div class="card-header d-flex justify-content-between flex-nowrap">
+                    <span>Codigo de pedido: {{ request.Codigo }}</span>
+                    <span>Ultimo estado = {{ estado.estado }}, Acualizado : {{estado.fechaac}}</span>
+                </div>
                   <div class="card-body">
-                      <h5 class="card-title">Origen = {{ request.Origen }}, Destino = {{ request.Destino }}</h5>
+                      <h5 class="card-title">Origen = {{ request.Origen }} _______________________________________________________ Destino = {{ request.Destino }}                                   </h5>
                       <p class="card-text">Son {{ request.NumPaquetes }} paquete(s) que contienen: {{ request.Descripcion }}</p>
+                      <p class="card-text"> Presione mas detalles si quiere ver la ultima foto que el repartidos subio </p>
                       <button class="btn btn-primary mas-detalles-btn" data-codigo="{{ request.Codigo }}">Mas detalles</button>
                       <div class="row justify-content-center mt-5">
                         <div class="imagen-contenedor mt-3" style="display: none;">
