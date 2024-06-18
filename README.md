@@ -32,4 +32,5 @@ para visualizar la web revisar el puerto 5000, en el archivo run.py se crean aut
 se puede probar las funcionalidades del cliente con el siguiente usuario
 
 usuario de prueba : test-testing@test.com
+
 contraseña : test**123
