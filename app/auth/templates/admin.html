@@ -167,14 +167,16 @@
                 const mensajeroId = $(this).data('mensajero-id');
                 const mes = $(this).closest('.opciones-pdf').find('.mes').val();
                 const anio = $(this).closest('.opciones-pdf').find('.anio').val();
-    
+
                 $.ajax({
                     url: "/get_ms_pdf",
                     type: 'POST',
                     contentType: 'application/json',
                     data: JSON.stringify({ mensajeroId: mensajeroId, mes: mes, anio: anio }),
-                    success: function(response) {
-                        const blob = new Blob([response], { type: 'application/pdf' });
+                    xhrFields: {
+                        responseType: 'blob'  // Esperamos una respuesta binaria (blob)
+                    },
+                    success: function(blob) {
                         const url = window.URL.createObjectURL(blob);
                         const a = document.createElement('a');
                         a.style.display = 'none';
@@ -185,7 +187,7 @@
                         window.URL.revokeObjectURL(url);
                     },
                     error: function(error) {
-                        alert('Error');
+                        alert('Error al descargar el archivo PDF');
                     }
                 });
             });
