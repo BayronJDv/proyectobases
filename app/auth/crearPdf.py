@@ -115,4 +115,4 @@ def pdfMensajero(nombre,correo,direccion,fecha,listaPedidos):
         pdf.multi_cell(w = 0, h = 11, txt = pedido.Descripcion , border = 1,
                 align = 'C', fill = 0)
 
-    pdf.output('lastReport.pdf')
+    pdf.output('enviar/lastReport.pdf')

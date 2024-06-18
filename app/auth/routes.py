@@ -306,7 +306,7 @@ def get_ms_pdf():
             print("Encuentra archivo")
             content = f.read()
             response = make_response(content)
-            response.headers['Content-Disposition'] = f'attachment; filename=reporte_{usuario_id}_{mes}_{anio}.pdf'
+            response.headers['Content-Disposition'] = f'attachment; filename=reporte_{mensajero_id}_{mes}_{anio}.pdf'
             response.headers['Content-Type'] = 'application/pdf'
             return response
     except Exception as e:
