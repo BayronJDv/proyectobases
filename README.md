@@ -1,7 +1,13 @@
 # proyectobases
 
+##autores 
+
+Bayron Sebastian Jojoa Rosero_2242917
+
+Alejandro Muñoz Guerrero_2242951
+
 el siguiente proyecto fue consrtuido principalmente en python con el framework flask, se usa una base de datos postgres cuya configuracion
-puede ser editada desde la carpeta config 
+puede ser editada desde la carpeta config (verificar la ip,el nombre y contraseña de la base de datos )
 
 ## intrucciones Ejecucion
 
