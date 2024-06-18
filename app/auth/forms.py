@@ -61,4 +61,3 @@ class RegistrationSucursalForm(FlaskForm):
     name = StringField("Name", validators=[DataRequired()])
     address = StringField("address", validators=[DataRequired()])
     telephone= StringField("telephone", validators=[DataRequired()])
-    
