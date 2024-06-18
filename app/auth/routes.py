@@ -277,10 +277,8 @@ def get_user_pdf():
     servicios = Service.query.filter(Service.userid == usuario_id,extract('month', Service.FechaHoraSolicitud) == mes, extract('year', Service.FechaHoraSolicitud) == anio).all()
 
     pdfUsuario(usuario.user_name,usuario.user_email,usuario.user_adress,usuario.create_date,servicios)    
-
     try:
         with open(f'enviar/lastReport.pdf', 'rb') as f:
-            print("Encuentra archivo")
             content = f.read()
             response = make_response(content)
             response.headers['Content-Disposition'] = f'attachment; filename=reporte_{usuario_id}_{mes}_{anio}.pdf'
@@ -295,15 +293,14 @@ def get_user_pdf():
 def get_ms_pdf():
     data = request.get_json()
     mensajero_id = data['mensajeroId']
-    mes = data['mes'] #1-12
-    anio = data['anio'] #Año
+    mes = data['mes']
+    anio = data['anio']
     mensajero = Userm.query.filter_by(id=mensajero_id).first()
     servicios = Service.query.filter(Service.usermid == mensajero_id,extract('month', Service.FechaHoraSolicitud) == mes, extract('year', Service.FechaHoraSolicitud) == anio).all()
     pdfMensajero(mensajero.userm_name,mensajero.userm_email,mensajero.userm_adress,mensajero.create_date,servicios)    
 
     try:
         with open(f'enviar/lastReport.pdf', 'rb') as f:
-            print("Encuentra archivo")
             content = f.read()
             response = make_response(content)
             response.headers['Content-Disposition'] = f'attachment; filename=reporte_{mensajero_id}_{mes}_{anio}.pdf'
@@ -370,5 +367,3 @@ def myinfo():
 @authentication.app_errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404
-
-
