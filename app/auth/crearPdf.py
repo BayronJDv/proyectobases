@@ -74,7 +74,6 @@ def pdfMensajero(nombre,correo,direccion,fecha,listaPedidos):
     f"Fecha y hora creacion Mensajero: {fecha}"
     )
 
-
     pdf.multi_cell(w = 0, h = 10, txt = textoInicial, border = 0,
          align = 'L', fill = 0)
     
@@ -89,10 +88,10 @@ def pdfMensajero(nombre,correo,direccion,fecha,listaPedidos):
     pdf.cell(w = 30, h = 13, txt = 'Destino', border = 1,
             align = 'C', fill = 0)
 
-    pdf.cell(w = 17, h = 13, txt = 'Paquetes', border = 1,
+    pdf.cell(w = 17, h = 12, txt = 'Paquetes', border = 1,
             align = 'C', fill = 0)
 
-    pdf.cell(w = 35, h = 13, txt = 'Transporte', border = 1,
+    pdf.cell(w = 35, h = 12, txt = 'Transporte', border = 1,
             align = 'C', fill = 0)
     
     pdf.multi_cell(w = 0, h = 13, txt = 'Descripcion', border = 1,
