@@ -18,25 +18,81 @@
         <div class="card-body">
             <div class="tab-content" id="myTabContent">
                 <div class="tab-pane fade show active" id="usuarios" role="tabpanel" aria-labelledby="usuarios-tab">
-                    <!-- Contenido para Usuarios -->
                     {% for usuario in usuarios %}
-                        <div class="card mb-2">
+                        <div class="card mb-2 usuario-card">
                             <div class="card-body">
-                                <h5 class="card-title">{{usuario.user_name}}</h5>
-                                <p class="card-text">{{usuario.user_email}}</p>
-                                <a href="#" class="btn btn-primary">Go pdf</a>
+                                <h5 class="card-title">{{ usuario.user_name }}</h5>
+                                <p class="card-text">{{ usuario.user_email }}</p>
+                                <button class="btn btn-primary usuario-desplegar-btn">Elegir</button>
+                                <div class="opciones-pdf" style="display: none; margin-top: 10px;">
+                                    <div class="form-group">
+                                        <label for="mes">Mes:</label>
+                                        <select id="mes-{{ loop.index }}" class="form-control mes">
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Actubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="anio">Año:</label>
+                                        <select id="anio-{{ loop.index }}" class="form-control anio">
+                                            {% for year in range(2020, 2030) %}
+                                                <option value="{{ year }}">{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-success usuario-hacer-pdf-btn" data-usuario-id="{{ usuario.id }}">Hacer PDF</button>
+                                    <button class="btn btn-secondary usuario-mostrar-menos-btn">Mostrar menos</button>
+                                </div>
                             </div>
                         </div>
-                    {% endfor %}
+                    {% endfor %}    
                 </div>
                 <div class="tab-pane fade" id="mensajeros" role="tabpanel" aria-labelledby="mensajeros-tab">
-                    <!-- Contenido para Mensajeros -->
                     {% for mensajero in mensajeros %}
-                        <div class="card mb-2">
+                        <div class="card mb-2 mensajero-card">
                             <div class="card-body">
-                                <h5 class="card-title">{{mensajero.userm_name}}</h5>
-                                <p class="card-text">{{mensajero.userm_email}}</p>
-                                <a href="#" class="btn btn-primary">Go pdf</a>
+                                <h5 class="card-title">{{ mensajero.userm_name }}</h5>
+                                <p class="card-text">{{ mensajero.userm_email }}</p>
+                                <button class="btn btn-primary mensajero-desplegar-btn">Elegir</button>
+                                <div class="opciones-pdf" style="display: none; margin-top: 10px;">
+                                    <div class="form-group">
+                                        <label for="mes">Mes:</label>
+                                        <select id="mes-{{ loop.index }}" class="form-control mes">
+                                            <option value="1">Enero</option>
+                                            <option value="2">Febrero</option>
+                                            <option value="3">Marzo</option>
+                                            <option value="4">Abril</option>
+                                            <option value="5">Mayo</option>
+                                            <option value="6">Junio</option>
+                                            <option value="7">Julio</option>
+                                            <option value="8">Agosto</option>
+                                            <option value="9">Septiembre</option>
+                                            <option value="10">Actubre</option>
+                                            <option value="11">Noviembre</option>
+                                            <option value="12">Diciembre</option>
+                                        </select>
+                                    </div>
+                                    <div class="form-group">
+                                        <label for="anio">Año:</label>
+                                        <select id="anio-{{ loop.index }}" class="form-control anio">
+                                            {% for year in range(2020, 2030) %}
+                                                <option value="{{ year }}">{{ year }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <button class="btn btn-success mensajero-hacer-pdf-btn" data-mensajero-id="{{ mensajero.id }}">Hacer PDF</button>
+                                    <button class="btn btn-secondary mensajero-mostrar-menos-btn">Mostrar menos</button>
+                                </div>
                             </div>
                         </div>
                     {% endfor %}
@@ -45,4 +101,109 @@
         </div>
     </div>
 </div>
+
+<script>
+    $(document).ready(function() {
+        function initUsuarioScripts() {
+            // Manejar el despliegue del formulario para usuarios
+            $('.usuario-desplegar-btn').on('click', function() {
+                var button = $(this);
+                var cardBody = button.closest('.card-body');
+                var opcionesPdf = cardBody.find('.opciones-pdf');
+                opcionesPdf.slideDown();
+            });
+    
+            // Manejar la creación del PDF para usuarios
+            $('.usuario-hacer-pdf-btn').on('click', function() {
+                const usuarioId = $(this).data('usuario-id');
+                const mes = $(this).closest('.opciones-pdf').find('.mes').val();
+                const anio = $(this).closest('.opciones-pdf').find('.anio').val();
+    
+                $.ajax({
+                    url: "/get_user_pdf",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ usuarioId: usuarioId, mes: mes, anio: anio }),
+                    xhrFields: {
+                        responseType: 'blob'  // Esperamos una respuesta binaria (blob)
+                    },
+                    success: function(blob) {
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `reporte_${usuarioId}_${mes}_${anio}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function(error) {
+                        alert('Error al descargar el archivo PDF');
+                    }
+                });
+                
+            });
+    
+            // Manejar el plegado del formulario para usuarios
+            $('.usuario-mostrar-menos-btn').on('click', function() {
+                var button = $(this);
+                var cardBody = button.closest('.card-body');
+                var opcionesPdf = cardBody.find('.opciones-pdf');
+                opcionesPdf.slideUp();
+            });
+        }
+    
+        function initMensajeroScripts() {
+            // Manejar el despliegue del formulario para mensajeros
+            $('.mensajero-desplegar-btn').on('click', function() {
+                var button = $(this);
+                var cardBody = button.closest('.card-body');
+                var opcionesPdf = cardBody.find('.opciones-pdf');
+                opcionesPdf.slideDown();
+            });
+    
+            // Manejar la creación del PDF para mensajeros
+            $('.mensajero-hacer-pdf-btn').on('click', function() {
+                const mensajeroId = $(this).data('mensajero-id');
+                const mes = $(this).closest('.opciones-pdf').find('.mes').val();
+                const anio = $(this).closest('.opciones-pdf').find('.anio').val();
+    
+                $.ajax({
+                    url: "/get_ms_pdf",
+                    type: 'POST',
+                    contentType: 'application/json',
+                    data: JSON.stringify({ mensajeroId: mensajeroId, mes: mes, anio: anio }),
+                    success: function(response) {
+                        const blob = new Blob([response], { type: 'application/pdf' });
+                        const url = window.URL.createObjectURL(blob);
+                        const a = document.createElement('a');
+                        a.style.display = 'none';
+                        a.href = url;
+                        a.download = `reporte_${mensajeroId}_${mes}_${anio}.pdf`;
+                        document.body.appendChild(a);
+                        a.click();
+                        window.URL.revokeObjectURL(url);
+                    },
+                    error: function(error) {
+                        alert('Error');
+                    }
+                });
+            });
+    
+            // Manejar el plegado del formulario para mensajeros
+            $('.mensajero-mostrar-menos-btn').on('click', function() {
+                var button = $(this);
+                var cardBody = button.closest('.card-body');
+                var opcionesPdf = cardBody.find('.opciones-pdf');
+                opcionesPdf.slideUp();
+            });
+        }
+    
+        // Inicializar scripts para cada sección
+        initUsuarioScripts();
+        initMensajeroScripts();
+    });
+    </script>
+    
+    
  {% endblock content%}
