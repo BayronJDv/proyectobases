@@ -200,12 +200,12 @@ def cambiarEstado(codigo,numE,foto,usuario):
         case 2:
             estado.estado='Recogido'
             estado.imagen=foto_binario
-            estado.fechaac = datetime.now
+            estado.fechaac = datetime.now()
             servicio.usermid=usuario
         case 3:
             estado.estado='Entregado'
             estado.imagen=foto_binario
-            estado.fechaac = datetime.now
+            estado.fechaac = datetime.now()
             servicio.usermid=usuario
         case _:
             print("La pagina fue modificada, tenga cuidado")
