@@ -20,6 +20,7 @@ se corre el siguiente comando, la contraneña debe coincidir con el archivo en c
 ### Aplicacion web 
 
 se hace el git clone a este repositorio, se inicia un entrono virtual, se activa el entrono  y se instalan los requerimientos
+
 instrucciones para windows:
 
     git clone https://github.com/BayronJDv/proyectobases.git
