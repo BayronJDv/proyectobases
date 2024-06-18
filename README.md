@@ -1,6 +1,6 @@
 # proyectobases
 
-##autores 
+## Autores 
 
 Bayron Sebastian Jojoa Rosero_2242917
 
