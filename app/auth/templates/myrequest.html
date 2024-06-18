@@ -6,27 +6,26 @@
 <div class="container">
   <div class="row justify-content-center mt-5">
       <div class="col-md-9">
-          {% for request in myrequest %}
-              <div class="card mb-4">
+          {% for item in myrequest %}
+            <div class="card mb-4">
                 <div class="card-header d-flex justify-content-between flex-nowrap">
-                    <span>Codigo de pedido: {{ request.Codigo }}</span>
-                    <span>Ultimo estado = {{ estado.estado }}, Acualizado : {{estado.fechaac}}</span>
+                    <span>Codigo de pedido: {{ item.service.Codigo }}</span>
+                    <span>Ultimo estado = {{ item.estado.estado }}, Acualizado : {{ item.estado.fechaac }}</span>
                 </div>
-                  <div class="card-body">
-                      <h5 class="card-title">Origen = {{ request.Origen }} _______________________________________________________ Destino = {{ request.Destino }}                                   </h5>
-                      <p class="card-text">Son {{ request.NumPaquetes }} paquete(s) que contienen: {{ request.Descripcion }}</p>
-                      <p class="card-text"> Presione mas detalles si quiere ver la ultima foto que el repartidos subio </p>
-                      <button class="btn btn-primary mas-detalles-btn" data-codigo="{{ request.Codigo }}">Mas detalles</button>
-                      <div class="row justify-content-center mt-5">
+                <div class="card-body">
+                    <h5 class="card-title">Origen = {{ item.service.Origen }} _______________________________________________________ Destino = {{ item.service.Destino }}</h5>
+                    <p class="card-text">Son {{ item.service.NumPaquetes }} paquete(s) que contienen: {{ item.service.Descripcion }}</p>
+                    <p class="card-text"> Presione mas detalles si quiere ver la ultima foto que el repartidor subio </p>
+                    <button class="btn btn-primary mas-detalles-btn" data-codigo="{{ item.service.Codigo }}">Mas detalles</button>
+                    <div class="row justify-content-center mt-5">
                         <div class="imagen-contenedor mt-3" style="display: none;">
-                          <img src="" class="img-fluid" alt="Imagen del pedido">
-                          <button class="btn btn-secondary mt-2 ocultar-imagen-btn">Mostrar menos</button>
+                            <img src="" class="img-fluid" alt="Imagen del pedido">
+                            <button class="btn btn-secondary mt-2 ocultar-imagen-btn">Mostrar menos</button>
                         </div>
-                      </div>
-                      
-                  </div>
-              </div>
-          {% endfor %}
+                    </div>
+                </div>
+            </div>
+           {% endfor %}
       </div>
   </div>
 </div>

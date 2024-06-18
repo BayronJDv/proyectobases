@@ -1,4 +1,6 @@
-from flask import render_template, flash, redirect, url_for, jsonify, request
+from datetime import datetime
+import os
+from flask import render_template, flash, redirect, url_for, jsonify, request, make_response, send_file
 from app.auth.forms import *
 from app.auth import authentication
 from app.auth.models import User,Client,Userm,Delivery,Service,State
@@ -6,6 +8,10 @@ from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from app import db
 import base64
+from sqlalchemy import extract
+
+from app.auth.crearPdf import *
+
 def role_required(role):
     def decorator(f):
         @wraps(f)
@@ -194,10 +200,12 @@ def cambiarEstado(codigo,numE,foto,usuario):
         case 2:
             estado.estado='Recogido'
             estado.imagen=foto_binario
+            estado.fechaac = datetime.now
             servicio.usermid=usuario
         case 3:
             estado.estado='Entregado'
             estado.imagen=foto_binario
+            estado.fechaac = datetime.now
             servicio.usermid=usuario
         case _:
             print("La pagina fue modificada, tenga cuidado")
@@ -226,7 +234,7 @@ def change_estado_route():
     
     cambiarEstado(codigo, nume, foto, usuario)
     
-    return jsonify({'message': f'Pedido con código {codigo} aceptado!'})
+    return jsonify({'message': f'Pedido con código {codigo} cambio de estado!'})
 
 @authentication.route("/homepagem")
 @login_required
@@ -246,7 +254,7 @@ def accept():
 @role_required('userm')
 def myservices():
     user_id = current_user.id
-    misPedidos = Service.query.filter_by(usermid=user_id).all()
+    misPedidos = (db.session.query(Service).join(State, Service.Codigo == State.serviceid).filter(Service.usermid == user_id).filter(State.estado != 'Entregado').all())
     return render_template("myservices.html", misPedidos=misPedidos)
 
 @authentication.route("/admin")
@@ -256,6 +264,53 @@ def admin():
     usuarios = User.query.all()
     mensajeros = Userm.query.all()
     return render_template("admin.html",usuarios=usuarios,mensajeros=mensajeros)
+
+@authentication.route("/get_user_pdf", methods=['POST'])
+@login_required
+@role_required('admin')
+def get_user_pdf():    
+    data = request.get_json()
+    usuario_id = data['usuarioId']
+    mes = data['mes']
+    anio = data['anio']
+    usuario = User.query.filter_by(id=usuario_id).first()
+    servicios = Service.query.filter(Service.userid == usuario_id,extract('month', Service.FechaHoraSolicitud) == mes, extract('year', Service.FechaHoraSolicitud) == anio).all()
+
+    pdfUsuario(usuario.user_name,usuario.user_email,usuario.user_adress,usuario.create_date,servicios)    
+
+    try:
+        with open(f'enviar/lastReport.pdf', 'rb') as f:
+            print("Encuentra archivo")
+            content = f.read()
+            response = make_response(content)
+            response.headers['Content-Disposition'] = f'attachment; filename=reporte_{usuario_id}_{mes}_{anio}.pdf'
+            response.headers['Content-Type'] = 'application/pdf'
+            return response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@authentication.route("/get_ms_pdf", methods=['POST'])
+@login_required
+@role_required('admin')
+def get_ms_pdf():
+    data = request.get_json()
+    mensajero_id = data['mensajeroId']
+    mes = data['mes'] #1-12
+    anio = data['anio'] #Año
+    mensajero = Userm.query.filter_by(id=mensajero_id).first()
+    servicios = Service.query.filter(Service.usermid == mensajero_id,extract('month', Service.FechaHoraSolicitud) == mes, extract('year', Service.FechaHoraSolicitud) == anio).all()
+    pdfMensajero(mensajero.userm_name,mensajero.userm_email,mensajero.userm_adress,mensajero.create_date,servicios)    
+
+    try:
+        with open(f'enviar/lastReport.pdf', 'rb') as f:
+            print("Encuentra archivo")
+            content = f.read()
+            response = make_response(content)
+            response.headers['Content-Disposition'] = f'attachment; filename=reporte_{usuario_id}_{mes}_{anio}.pdf'
+            response.headers['Content-Type'] = 'application/pdf'
+            return response
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 @authentication.route("/logout", methods=["GET"])
 @login_required
@@ -280,10 +335,10 @@ def delete():
 @authentication.route("/myrequest", methods=["POST","GET"])
 def myrequest():
     miid = current_user.id
-    myrequest = Service.query.filter_by(userid = miid)
-    estado = db.session.query(State).join(Service, State.serviceid == Service.Codigo).filter(Service.userid == miid).first()
-    if myrequest.count() > 0:
-        return render_template("myrequest.html",myrequest=myrequest, estado=estado)
+    servicio_estado = db.session.query(Service, State).join(State, Service.Codigo == State.serviceid).filter(Service.userid == miid).all()
+    myrequest = [{'service': pedido, 'estado': estado} for pedido, estado in servicio_estado]
+    if len(myrequest) > 0:
+        return render_template("myrequest.html",myrequest=myrequest)
     else:
         flash("Aun no has realizado ningun pedido")
         return redirect(url_for("authentication.homepage"))
