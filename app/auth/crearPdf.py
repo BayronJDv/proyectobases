@@ -29,7 +29,7 @@ def pdfUsuario(nombre,correo,direccion,fecha,listaPedidos):
     pdf.cell(w = 30, h = 13, txt = 'Destino', border = 1,
             align = 'C', fill = 0)
 
-    pdf.cell(w = 17, h = 13, txt = 'Paquetes', border = 1,
+    pdf.cell(w = 18, h = 13, txt = 'Paquetes', border = 1,
             align = 'C', fill = 0)
 
     pdf.cell(w = 35, h = 13, txt = 'Fecha', border = 1,
@@ -46,7 +46,7 @@ def pdfUsuario(nombre,correo,direccion,fecha,listaPedidos):
         pdf.cell(w = 30, h = 11, txt = pedido.Destino, border = 1,
                 align = 'C', fill = 0)
 
-        pdf.cell(w = 17, h = 11, txt = str(pedido.NumPaquetes), border = 1,
+        pdf.cell(w = 18, h = 11, txt = str(pedido.NumPaquetes), border = 1,
                 align = 'C', fill = 0)
 
         pdf.cell(w = 35, h = 11, txt = str(pedido.FechaHoraSolicitud)[:10], border = 1,
@@ -88,10 +88,10 @@ def pdfMensajero(nombre,correo,direccion,fecha,listaPedidos):
     pdf.cell(w = 30, h = 13, txt = 'Destino', border = 1,
             align = 'C', fill = 0)
 
-    pdf.cell(w = 17, h = 12, txt = 'Paquetes', border = 1,
+    pdf.cell(w = 20, h = 13, txt = 'Paquetes', border = 1,
             align = 'C', fill = 0)
 
-    pdf.cell(w = 35, h = 12, txt = 'Transporte', border = 1,
+    pdf.cell(w = 32, h = 13, txt = 'Transporte', border = 1,
             align = 'C', fill = 0)
     
     pdf.multi_cell(w = 0, h = 13, txt = 'Descripcion', border = 1,
@@ -105,10 +105,10 @@ def pdfMensajero(nombre,correo,direccion,fecha,listaPedidos):
         pdf.cell(w = 30, h = 11, txt = pedido.Destino, border = 1,
                 align = 'C', fill = 0)
 
-        pdf.cell(w = 17, h = 11, txt = str(pedido.NumPaquetes), border = 1,
+        pdf.cell(w = 20, h = 11, txt = str(pedido.NumPaquetes), border = 1,
                 align = 'C', fill = 0)
 
-        pdf.cell(w = 35, h = 11, txt = pedido.TipoTransporte, border = 1,
+        pdf.cell(w = 32, h = 11, txt = pedido.TipoTransporte, border = 1,
                 align = 'C', fill = 0)
         
         pdf.multi_cell(w = 0, h = 11, txt = pedido.Descripcion , border = 1,
