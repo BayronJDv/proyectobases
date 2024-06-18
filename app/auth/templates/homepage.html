@@ -30,7 +30,7 @@
               </a>
               <div class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
                 <a class="dropdown-item" href="{{ url_for('authentication.log_out_user')}}">cerrar sesion</a>
-                <a class="dropdown-item" href="#">MI informacion</a>
+                <a class="dropdown-item" href="{{ url_for('authentication.myinfo')}}">MI informacion</a>
                 <a class="dropdown-item" href="{{ url_for('authentication.delete')}}">Borrar Cuenta</a>
               </div>
             </li>
