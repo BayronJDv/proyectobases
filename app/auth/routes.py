@@ -307,7 +307,11 @@ def rsucursal():
         return redirect(url_for("authentication.homepage"))
     return render_template("rsucursal.html",form = form )
 
-
+@authentication.route("/myinfo", methods=["POST","GET"])
+def myinfo():
+    userinfo = User.query.get(current_user.id)
+    sucursales = Sucursal.query.filter_by(clientid = User.cid).all()
+    return render_template("myinfo.html", user = userinfo, sucursales = sucursales)
 @authentication.app_errorhandler(404)
 def page_not_found(error):
     return render_template('404.html'), 404

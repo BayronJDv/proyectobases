@@ -1,0 +1,51 @@
+
+{% extends "homepage.html" %}
+
+{% block content %}
+
+<body>
+    <div class="container-fluid">
+        <div class="row">
+            <!-- Contenedor Izquierdo -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        <p> Información de mi cuenta </p> 
+                    </div>
+                    <div class="card-body">
+                        <h5 class="card-title">{{ user.user_name}}</h5>
+                        <p class="card-text">Email: {{ user.user_email }}</p>
+                        <p class="card-text">Dirección: {{ user.user_adress }}</p>
+                        <p class="card-text">Dirección: {{ user.cid }}</p>
+                        <!-- Añade más campos según sea necesario -->
+                    </div>
+                </div>
+            </div>
+            <!-- Contenedor Derecho -->
+            <div class="col-md-6">
+                <div class="card">
+                    <div class="card-header">
+                        Lista de Mis Sucursales
+                    </div>
+                    <div class="card-body">
+                        <ul class="list-group">
+                           
+                            {% for sucursal in sucursales %}
+                                <li class="list-group-item">
+                                    <p>Nombre : {{sucursal.sucursal_name}}</p>
+                                    <p>Direccion : {{sucursal.sucursal_adress}}</p>
+                                    <p>Telephone : {{sucursal.sucursal_telephone}}</p>
+                                    <p>Id Dueño :  {{sucursal.clientid}}</p>
+                            {% endfor %}
+                           
+                           
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</body>
+
+{% endblock content %}
